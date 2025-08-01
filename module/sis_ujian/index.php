@@ -121,9 +121,10 @@ $sql_data = mysqli_query($koneksi, "
 	WHERE a.pembuat = '$pembuat'
 	  AND a.terbit = 'Y'
 	  AND d.id_kelas = '$kelas'
-	  AND a.tgl_buat BETWEEN '$thn_lalu' AND '$thn_skrg'
 	ORDER BY a.id DESC
 ");
+echo "$thn_lalu - $thn_skrg";
+
 
 while ($r = mysqli_fetch_array($sql_data)) {
 ?>
