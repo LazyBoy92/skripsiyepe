@@ -1,0 +1,2 @@
+[06-Mar-2022 17:48:52 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/smkk2337/public_html/elearning/module/ug_ujian/export_excel.php:49) in /home/smkk2337/public_html/elearning/module/ug_ujian/export_excel.php on line 56
+[06-Mar-2022 17:48:52 Asia/Jakarta] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/smkk2337/public_html/elearning/module/ug_ujian/export_excel.php:49) in /home/smkk2337/public_html/elearning/module/ug_ujian/export_excel.php on line 57

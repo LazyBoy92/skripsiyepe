@@ -1,0 +1,8 @@
+silakan atur koneksi di bagian
+
+
+config/koneksi.php
+
+modul/user/load.php
+
+modul/siswa/load.php

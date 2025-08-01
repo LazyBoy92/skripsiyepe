@@ -1,0 +1,5 @@
+[23-Jul-2024 10:19:03 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_connect() in /home/kokh7173/public_html/kawulaindonesia.my.id/config/koneksi.php:10
+Stack trace:
+#0 /home/kokh7173/public_html/kawulaindonesia.my.id/module/f_ujian/cetak_laporan.php(51): include()
+#1 {main}
+  thrown in /home/kokh7173/public_html/kawulaindonesia.my.id/config/koneksi.php on line 10
