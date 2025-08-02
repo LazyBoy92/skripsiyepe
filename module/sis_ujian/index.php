@@ -15,45 +15,46 @@ if (empty($_SESSION['namauser']) && empty($_SESSION['passuser'])) {
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <div class="card bg-deafult shadow">
+        <div class="card bg-default shadow">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Daftar Ujian</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped" id="table_1" width="100%" cellspacing="0" cellpadding="0">
+                    <table class="table table-bordered table-striped" id="table_1" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <td>No</td>
-                                <td>Nama Ujian</td>
-                                <td>Mapel</td>
-                                <td>Pengajar</td>
-                                <td>Waktu</td>
-                                <td>Kerjakan</td>
+                                <th>No</th>
+                                <th>Nama Ujian</th>
+                                <th>Mapel</th>
+                                <th>Pengajar</th>
+                                <th>Waktu</th>
+                                <th>Kerjakan</th>
                             </tr>
                         </thead>
                         <tbody>
 <?php
 $no = 1;
-$nis = mysqli_fetch_array(mysqli_query($koneksi, "SELECT nis FROM siswa WHERE id='{$_SESSION['id_user']}'"));
-$get_kelas = mysqli_fetch_array(mysqli_query($koneksi, "SELECT id_kelas FROM f_kelas WHERE nis='{$nis['nis']}' AND tp='$tahun_p'"));
-$id_kelas_siswa = $get_kelas['id_kelas'];
 
+// Ambil NIS siswa
+$nis_data = mysqli_fetch_array(mysqli_query($koneksi, "SELECT nis FROM siswa WHERE id='{$_SESSION['id_user']}'"));
+$nis_siswa = $nis_data['nis'];
+
+// Ambil daftar ujian sesuai kelas siswa
 $sql_data = mysqli_query($koneksi, "
-    SELECT a.*, b.nama_mapel, c.nama_lengkap 
+    SELECT DISTINCT a.id, a.judul, b.nama_mapel, c.nama_lengkap, a.waktu_pengerjaan, a.pembuat
     FROM topik_ujian a
     JOIN m_mapel b ON a.id_mapel = b.id_mapel
     JOIN guru c ON a.pembuat = c.id
     JOIN kelas_ujian d ON a.id = d.id_topik
+    JOIN f_kelas fk ON d.id_kelas = fk.id_kelas
     WHERE a.terbit = 'Y'
-      AND d.id_kelas = '$id_kelas_siswa'
+      AND fk.nis = '$nis_siswa'
+      AND fk.tp = '$tahun_p'
     ORDER BY a.id DESC
 ");
 
-if (mysqli_num_rows($sql_data) == 0) {
-    echo "<tr><td colspan='6' align='center'>Tidak ada ujian untuk kelas Anda.</td></tr>";
-} else {
-    while ($r = mysqli_fetch_array($sql_data)) {
+while ($r = mysqli_fetch_array($sql_data)) {
 ?>
     <tr>
         <td><?= $no++; ?></td>
@@ -67,10 +68,7 @@ if (mysqli_num_rows($sql_data) == 0) {
             </a>
         </td>
     </tr>
-<?php
-    }
-}
-?>
+<?php } ?>
                         </tbody>
                     </table>
                 </div>
