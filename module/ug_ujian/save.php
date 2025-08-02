@@ -15,12 +15,12 @@ header('location:../index.php');
 	  	if (!empty($lokasi_file)) {
 	        if (file_exists($direktori_file)) {
 	            save_alert('error','Nama File Gambar Sudah Ada');
-				htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+				htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	        }else{
 	            if ($tipe_file != "image/jpeg" AND $tipe_file != "image/jpg" )
 	            {
 		            save_alert('error','Type File Tidak di Izinkan');
-					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	            }
 	            else
 	            {
@@ -28,7 +28,7 @@ header('location:../index.php');
 	                UploadImage_soal($nama_file);
 	                mysqli_query($koneksi,"INSERT INTO soal_esay(id_tujian,pertanyaan,gambar,tgl_buat,jenis_soal) VALUES('$_POST[id_tujian]','$_POST[pertanyaan]','$nama_file','$tgl_sekarang','essay')");
 	                save_alert('save','Soal Tersimpan');
-					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	            }
 	        }     
 	    }
@@ -36,7 +36,7 @@ header('location:../index.php');
 	        mysqli_query($koneksi,"INSERT INTO soal_esay(id_tujian,pertanyaan,tgl_buat,jenis_soal)
 	                   VALUES('$_POST[id_tujian]','$_POST[pertanyaan]','$tgl_sekarang','essay')");
 	        save_alert('save','Soal Tersimpan');
-			htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+			htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	    	}
 	}
 
@@ -49,20 +49,20 @@ header('location:../index.php');
 	  	if (!empty($lokasi_file)){
 	        if (file_exists($direktori_file)){
 	            save_alert('error','Nama File Gambar Sudah Ada');
-				htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+				htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	        }
 	        else{
 	            if ($tipe_file != "image/jpeg" AND $tipe_file != "image/jpg" )
 	            {
 		            save_alert('error','Type File Tidak di Izinkan');
-					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	            }
 	            else {
 	                $cek = mysqli_query($koneksi,"SELECT * FROM soal_esay WHERE id_soal = '$_POST[id_soal]'");
 	                //echo "SELECT * FROM soal_esay WHERE id_soal = '$_POST[id_soal]'";
 	                $rd = mysqli_fetch_array($cek);
 
-	                if(!empty($rd[gambar]))
+	                if(!empty($rd['gambar']))
 	                {
 		                $img = "module/foto_soal/$rd[gambar]";
 		                unlink($img);
@@ -73,13 +73,13 @@ header('location:../index.php');
 	                                                  gambar     = '$nama_file'
 	                                            WHERE id_soal 	 = '$_POST[id_soal]'");
 		                save_alert('save','Soal Tersimpan');
-						htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+						htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	            		}
 	            	else {
 	            		UploadImage_soal($nama_file);
 		                mysqli_query($koneksi,"UPDATE soal_esay SET pertanyaan = '$_POST[pertanyaan]', gambar     = '$nama_file' WHERE id_soal 	 = '$_POST[id_soal]'");
 		                save_alert('save','Soal Tersimpan');
-						htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+						htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	            	}
 	        	}
 	        }     
@@ -88,7 +88,7 @@ header('location:../index.php');
         mysqli_query($koneksi,"UPDATE soal_esay SET pertanyaan = '$_POST[pertanyaan]' WHERE id_soal  = '$_POST[id_soal]'");
         //echo "UPDATE soal_esay SET pertanyaan = '$_POST[soal]', tgl_buat   = '$tgl_sekarang' WHERE id_soal  = '$_POST[id_soal]'";
         save_alert('save','Soal Berhasil di rubah');
-		htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+		htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
     	}
 	}
 
@@ -102,12 +102,12 @@ header('location:../index.php');
 	  	if (!empty($lokasi_file)) {
 	        if (file_exists($direktori_file)) {
 	            save_alert('error','Nama File Gambar Sudah Ada');
-				htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+				htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	        }else{
 	            if ($tipe_file != "image/jpeg" AND $tipe_file != "image/jpg" )
 	            {
 		            save_alert('error','Type File Tidak di Izinkan');
-					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	            }
 	            else
 	            {
@@ -115,14 +115,14 @@ header('location:../index.php');
 	                UploadImage_soal_pilganda($nama_file);
 	                mysqli_query($koneksi,"INSERT INTO soal_pilganda(id_tujian,pertanyaan,gambar,pil_a,pil_b,pil_c,pil_d,pil_e,kunci,tgl_buat,jenis_soal) VALUES('$_POST[id_tujian]','$_POST[pertanyaan]','$nama_file','$_POST[pil_a]','$_POST[pil_b]','$_POST[pil_c]','$_POST[pil_d]','$_POST[pil_e]','$_POST[kunci]','$tgl_sekarang','pil_ganda')");
 	                save_alert('save','Soal Tersimpan');
-					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	            }
 	        }     
 	    }
 	    else {
 	        mysqli_query($koneksi,"INSERT INTO soal_pilganda(id_tujian,pertanyaan,gambar,pil_a,pil_b,pil_c,pil_d,pil_e,kunci,tgl_buat,jenis_soal) VALUES('$_POST[id_tujian]','$_POST[pertanyaan]','','$_POST[pil_a]','$_POST[pil_b]','$_POST[pil_c]','$_POST[pil_d]','$_POST[pil_e]','$_POST[kunci]','$tgl_sekarang','pil_ganda')");
 	        save_alert('save','Soal Tersimpan');
-			htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+			htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	    	}
 	}
 
@@ -135,20 +135,20 @@ header('location:../index.php');
 	  	if (!empty($lokasi_file)){
 	        if (file_exists($direktori_file)){
 	            save_alert('error','Nama File Gambar Sudah Ada');
-				htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+				htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	        }
 	        else{
 	            if ($tipe_file != "image/jpeg" AND $tipe_file != "image/jpg" )
 	            {
 		            save_alert('error','Type File Tidak di Izinkan');
-					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+					htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	            }
 	            else {
 	                $cek = mysqli_query($koneksi,"SELECT * FROM soal_pilganda WHERE id_soalpg = '$_POST[id_soalpg]'");
 	                //echo "SELECT * FROM soal_esay WHERE id_soal = '$_POST[id_soal]'";
 	                $rd = mysqli_fetch_array($cek);
 
-	                if(!empty($rd[gambar]))
+	                if(!empty($rd['gambar']))
 	                {
 		                $img = "module/foto_soal_pilganda/$rd[gambar]";
 		                unlink($img);
@@ -157,13 +157,13 @@ header('location:../index.php');
 		                UploadImage_soal_pilganda($nama_file);
 		                mysqli_query($koneksi,"UPDATE soal_pilganda SET pertanyaan = '$_POST[soal]', pil_a = '$_POST[pil_a]', pil_b = '$_POST[pil_b]', pil_c = '$_POST[pil_c]', pil_d = '$_POST[pil_d]', pil_e = '$_POST[pil_e]', kunci = '$_POST[kunci]', gambar = '$nama_file',tgl_buat = '$tgl_sekarang' WHERE id_soalpg = '$_POST[id_soalpg]'");
 		                save_alert('save','Soal Tersimpan');
-						htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+						htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	            		}
 	            	else {
 	            		UploadImage_soal_pilganda($nama_file);
 		                mysqli_query($koneksi,"UPDATE soal_pilganda SET pertanyaan = '$_POST[soal]', pil_a = '$_POST[pil_a]', pil_b = '$_POST[pil_b]', pil_c = '$_POST[pil_c]', pil_d = '$_POST[pil_d]', pil_e = '$_POST[pil_e]', kunci = '$_POST[kunci]', gambar = '$nama_file',tgl_buat = '$tgl_sekarang' WHERE id_soalpg = '$_POST[id_soalpg]'");
 		                save_alert('save','Soal Tersimpan');
-						htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+						htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	            	}
 	        	}
 	        }     
@@ -172,35 +172,51 @@ header('location:../index.php');
        mysqli_query($koneksi,"UPDATE soal_pilganda SET pertanyaan = '$_POST[soal]', pil_a = '$_POST[pil_a]', pil_b = '$_POST[pil_b]', pil_c = '$_POST[pil_c]', pil_d = '$_POST[pil_d]', pil_e = '$_POST[pil_e]', kunci = '$_POST[kunci]',tgl_buat = '$tgl_sekarang' WHERE id_soalpg 	 = '$_POST[id_soalpg]'");
         //echo "UPDATE soal_esay SET pertanyaan = '$_POST[soal]', tgl_buat   = '$tgl_sekarang' WHERE id_soal  = '$_POST[id_soal]'";
         save_alert('save','Soal Berhasil di rubah');
-		htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+		htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
     	}
 	}
 
 	elseif(isset($_POST['simpan_tu'])) {
-
-		$id=mysqli_fetch_array(mysqli_query($koneksi,"SELECT MAX(id) as jum FROM topik_ujian"));
-		$idmax = $id['jum']+1;
-		$waktu = $_POST['waktu_pengerjaan']*60;
-        $data = "INSERT INTO topik_ujian(id,judul,id_mapel,tgl_buat,pembuat,waktu_pengerjaan,info,bobot_pg,bobot_esay,terbit) VALUES('$idmax','$_POST[judul]','$_POST[id_mapel]','$tgl_sekarang','$_SESSION[id_user]','$waktu','$_POST[info]','$_POST[bobot_pg]', '$_POST[bobot_esay]','$_POST[terbit]')";
-        if(mysqli_query($koneksi,$data))
-        {
-        	$n 		= count($_POST['id_kelas']);
-			$kelas	= $_POST['id_kelas'];
-			
-			for($x=0;$x<$n;$x++)
-			{
-				$a2="INSERT INTO kelas_ujian VALUES('$idmax','$kelas[$x]')";
-				mysqli_query($koneksi,$a2);
-				//echo $a2;
+		// Ambil id terakhir + 1
+		$id = mysqli_fetch_array(mysqli_query($koneksi,"SELECT MAX(id) as jum FROM topik_ujian"));
+		$idmax = $id['jum'] + 1;
+	
+		// Hitung waktu dalam detik
+		$waktu = $_POST['waktu_pengerjaan'] * 60;
+	
+		// Simpan ujian ke topik_ujian
+		$data = "
+			INSERT INTO topik_ujian (
+				id, judul, id_mapel, tgl_buat, pembuat, waktu_pengerjaan,
+				info, bobot_pg, bobot_esay, terbit
+			) VALUES (
+				'$idmax', '{$_POST['judul']}', '{$_POST['id_mapel']}',
+				'$tgl_sekarang', '{$_SESSION['id_user']}', '$waktu',
+				'{$_POST['info']}', '{$_POST['bobot_pg']}', '{$_POST['bobot_esay']}',
+				'{$_POST['terbit']}'
+			)
+		";
+	
+		if (mysqli_query($koneksi, $data)) {
+			// Simpan data kelas yang ikut ujian
+			if (!empty($_POST['id_kelas']) && is_array($_POST['id_kelas'])) {
+				foreach ($_POST['id_kelas'] as $kelas) {
+					mysqli_query($koneksi, "
+						INSERT INTO kelas_ujian (id_topik, id_kelas)
+						VALUES ('$idmax', '$kelas')
+					");
+				}
 			}
-			save_alert('save','Ujian Berhasil di Tambahkan');
+	
+			save_alert('save', 'Ujian Berhasil di Tambahkan');
 			htmlRedirect('media.php?module='.$module.'&act=ug_ujian');
-        }
-        else {
-        	save_alert('error','Gagal Tersimpan');
+		} else {
+			save_alert('error', 'Gagal Tersimpan: '.mysqli_error($koneksi));
 			htmlRedirect('media.php?module='.$module.'&act=ug_ujian');
-        }
-	}	
+		}
+	}
+	
+	
 
 	elseif(isset($_POST['update_tu'])) {
 		$waktu = $_POST['waktu_pengerjaan']*60;
@@ -236,11 +252,11 @@ header('location:../index.php');
         if(mysqli_query($koneksi,$data))
         {
 			save_alert('save','Soal dikoreksi');
-			htmlRedirect('media.php?module='.$module.'&act=koreksi&ujian='.$_POST[ujian].'&siswa='.$_POST[siswa]);
+			htmlRedirect('media.php?module='.$module.'&act=koreksi&ujian='.$_POST['ujian'].'&siswa='.$_POST['siswa']);
         }
         else {
         	save_alert('error','Gagal dikoreksi');
-			htmlRedirect('media.php?module='.$module.'&act=koreksi&ujian='.$_POST[ujian].'&siswa='.$_POST[siswa]);
+			htmlRedirect('media.php?module='.$module.'&act=koreksi&ujian='.$_POST['ujian'].'&siswa='.$_POST['siswa']);
         }
 	}
 
@@ -260,7 +276,7 @@ header('location:../index.php');
 		}
 
 		save_alert('save','Soal Tersimpan');
-		htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST[id_tujian],1);
+		htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_POST['id_tujian'],1);
 	}
 
 	elseif(isset($_POST['pg_bank'])) {
@@ -278,7 +294,7 @@ header('location:../index.php');
 		}
 
 		save_alert('save','Soal Tersimpan');
-		htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST[id_tujian],1);
+		htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'],1);
 	}		
 
 
