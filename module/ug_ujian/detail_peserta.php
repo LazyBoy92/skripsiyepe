@@ -200,10 +200,16 @@ else{
           <option value="">--Pilih Kelas--</option>
           
           <?php 
-            $sq_kelas=mysqli_query($koneksi,"SELECT a.nama_kelas, b.id_kelas FROM m_kelas a, kelas_ujian b WHERE a.id_kelas=b.id_kelas AND b.id='$id_ujian'");
-            while($rk=mysqli_fetch_array($sq_kelas)){
-                  echo '<option value='.$rk[id_kelas].'>'.$rk[nama_kelas].'<option>';
-            }
+            $sq_kelas=mysqli_query($koneksi,"
+            SELECT a.nama_kelas, b.id_kelas 
+            FROM m_kelas a
+            JOIN kelas_ujian b ON a.id_kelas = b.id_kelas 
+            WHERE b.id_topik = '$id_ujian'
+        ");
+        while($rk=mysqli_fetch_array($sq_kelas)){
+            echo '<option value="'.$rk['id_kelas'].'">'.$rk['nama_kelas'].'</option>';
+        }
+        
           ?>
         </select>
       </div>
@@ -216,39 +222,28 @@ else{
   </div>
 </div>
 
-<!-- Modal export-->
-<div class="modal fade" id="export"  role="dialog" >
-  <div class="modal-dialog modal-md" role="document">
-    <div class="modal-content">
-    <form method="POST" action="module/ug_ujian/export_excel.php" enctype="multipart/form-data" target="_blank">
-      <div class="modal-header">
-        <h4 class="modal-title" >Export ke Excel Laporan Nilai</h4>
-      </div>
-      <?php 
-        $data=mysqli_fetch_array(mysqli_query($koneksi,"SELECT nama_lengkap FROM siswa WHERE id='$row[id_siswa]'"));
-       ?>
-      
-      <div class="modal-body" align="justify-content-between">
-        <input type="hidden" name="id_ujian" value="<?= $id_ujian;?>">
-        <select name="id_kelas" class="select2 form-control" required="required">
-          <option value="">--Pilih Kelas--</option>
-          
-          <?php 
-            $sq_kelas=mysqli_query($koneksi,"SELECT a.nama_kelas, b.id_kelas FROM m_kelas a, kelas_ujian b WHERE a.id_kelas=b.id_kelas AND b.id='$id_ujian'");
-            while($rk=mysqli_fetch_array($sq_kelas)){
-                  echo '<option value='.$rk[id_kelas].'>'.$rk[nama_kelas].'<option>';
-            }
-          ?>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-        <button type="submit" name="cetak" class="btn btn-primary"><i class="fas fa-print"></i> Cetak</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
+
+<!-- Modal Export -->
+<form method="POST" action="module/ug_ujian/export_excel.php" target="_blank">
+    <input type="hidden" name="id_ujian" value="<?= $_GET['id']; ?>">
+    <select name="id_kelas" class="select2 form-control" required>
+        <option value="">--Pilih Kelas--</option>
+        <?php 
+        $sq_kelas = mysqli_query($koneksi,"
+            SELECT a.nama_kelas, b.id_kelas
+            FROM m_kelas a
+            JOIN kelas_ujian b ON a.id_kelas = b.id_kelas
+            WHERE b.id_topik = '{$_GET['id']}'
+        ");
+        while($rk = mysqli_fetch_array($sq_kelas)){
+            echo '<option value="'.$rk['id_kelas'].'">'.$rk['nama_kelas'].'</option>';
+        }
+        ?>
+    </select>
+    <button type="submit" class="btn btn-primary">Export</button>
+</form>
+
+
 <?php
       }
 }

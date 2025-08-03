@@ -4,6 +4,7 @@ if (empty($_SESSION['namauser']) && empty($_SESSION['passuser'])) {
     header('location:../index.php');
     exit();
 } else {
+    
 
     // SIMPAN UJIAN BARU
     if (isset($_POST['simpan_tu'])) {
@@ -150,14 +151,222 @@ if (empty($_SESSION['namauser']) && empty($_SESSION['passuser'])) {
 
     // SIMPAN ESSAY
     elseif (isset($_POST['simpan_essay'])) {
-        mysqli_query($koneksi, "INSERT INTO soal_esay (
-            id_tujian, pertanyaan, tgl_buat, jenis_soal
-        ) VALUES (
-            '{$_POST['id_tujian']}', '{$_POST['pertanyaan']}', '$tgl_sekarang', 'essay'
-        )");
-        save_alert('save', 'Soal Essay Tersimpan');
-        htmlRedirect('media.php?module=' . $module . '&act=essay&id=' . $_POST['id_tujian'], 1);
+        if (!isset($tgl_sekarang) || empty($tgl_sekarang)) {
+            $tgl_sekarang = date('Y-m-d');
+        }
+    
+        $id_tujian  = intval($_POST['id_tujian']);
+        $pertanyaan = mysqli_real_escape_string($koneksi, $_POST['pertanyaan']);
+    
+        $lokasi_file = $_FILES['fupload']['tmp_name'];
+        $nama_file   = $_FILES['fupload']['name'];
+        $tipe_file   = $_FILES['fupload']['type'];
+    
+        if (!empty($lokasi_file)) {
+            if ($tipe_file != "image/jpeg" && $tipe_file != "image/jpg" && $tipe_file != "image/png") {
+                save_alert('error', 'Type file tidak diizinkan');
+                htmlRedirect('media.php?module='.$module.'&act=essay&id='.$id_tujian, 1);
+                exit();
+            }
+            // Upload gambar
+            UploadImage_soal($nama_file);
+            $gambar = $nama_file;
+        } else {
+            $gambar = ''; 
+        }
+    
+        $query = "INSERT INTO soal_esay (id_tujian, pertanyaan, gambar, tgl_buat, jenis_soal)
+                  VALUES ('$id_tujian', '$pertanyaan', '$gambar', '$tgl_sekarang', 'essay')";
+    
+        if (mysqli_query($koneksi, $query)) {
+            save_alert('save', 'Soal essay tersimpan');
+        } else {
+            save_alert('error', 'Gagal menyimpan soal essay: '.mysqli_error($koneksi));
+        }
+    
+        htmlRedirect('media.php?module='.$module.'&act=essay&id='.$id_tujian, 1);
     }
+
+    // AMBIL ESSAY DARI BANK SOAL
+elseif (isset($_POST['essay_bank'])) {
+    if (!isset($tgl_sekarang) || empty($tgl_sekarang)) {
+        $tgl_sekarang = date('Y-m-d');
+    }
+
+    $id_tujian = intval($_POST['id_tujian']);
+    $id_soal   = isset($_POST['id']) ? $_POST['id'] : [];
+
+    if (!empty($id_soal) && is_array($id_soal)) {
+        foreach ($id_soal as $soal_id) {
+            $soal_id = intval($soal_id);
+            $cd = mysqli_fetch_array(mysqli_query(
+                $koneksi,
+                "SELECT pertanyaan, gambar FROM bank_esay WHERE id='$soal_id'"
+            ));
+
+            $pertanyaan = mysqli_real_escape_string($koneksi, $cd['pertanyaan']);
+            $gambar = !empty($cd['gambar']) ? $cd['gambar'] : '';
+
+            mysqli_query(
+                $koneksi,
+                "INSERT INTO soal_esay (id_tujian, pertanyaan, gambar, tgl_buat, jenis_soal)
+                 VALUES ('$id_tujian', '$pertanyaan', '$gambar', '$tgl_sekarang', 'essay')"
+            ) or die(mysqli_error($koneksi));
+        }
+        save_alert('save', 'Soal dari bank soal berhasil ditambahkan');
+    } else {
+        save_alert('error', 'Tidak ada soal yang dipilih');
+    }
+
+    htmlRedirect('media.php?module='.$module.'&act=essay&id='.$id_tujian, 1);
+}
+
+// UPDATE ESSAY
+elseif (isset($_POST['update_essay'])) {
+    if (!isset($tgl_sekarang) || empty($tgl_sekarang)) {
+        $tgl_sekarang = date('Y-m-d');
+    }
+
+    $id_soal    = intval($_POST['id_soal']);
+    $id_tujian  = intval($_POST['id_tujian']);
+    $pertanyaan = mysqli_real_escape_string($koneksi, $_POST['pertanyaan']);
+
+    $lokasi_file = $_FILES['fupload']['tmp_name'];
+    $nama_file   = $_FILES['fupload']['name'];
+    $tipe_file   = $_FILES['fupload']['type'];
+
+    if (!empty($lokasi_file)) {
+        if ($tipe_file != "image/jpeg" && $tipe_file != "image/jpg" && $tipe_file != "image/png") {
+            save_alert('error', 'Type file tidak diizinkan');
+            htmlRedirect('media.php?module='.$module.'&act=essay&id='.$id_tujian, 1);
+            exit();
+        }
+
+        // Ambil gambar lama untuk dihapus
+        $old = mysqli_fetch_array(mysqli_query($koneksi, "SELECT gambar FROM soal_esay WHERE id_soal='$id_soal'"));
+        if (!empty($old['gambar'])) {
+            @unlink("module/foto_soal/".$old['gambar']);
+            @unlink("module/foto_soal/medium_".$old['gambar']);
+        }
+
+        // Upload gambar baru
+        UploadImage_soal($nama_file);
+        $gambar_sql = ", gambar='$nama_file'";
+    } else {
+        $gambar_sql = ""; // Tidak ubah gambar
+    }
+
+    $query = "UPDATE soal_esay 
+              SET pertanyaan='$pertanyaan', tgl_buat='$tgl_sekarang' $gambar_sql
+              WHERE id_soal='$id_soal'";
+
+    if (mysqli_query($koneksi, $query)) {
+        save_alert('save', 'Soal essay berhasil diupdate');
+    } else {
+        save_alert('error', 'Gagal update soal essay: '.mysqli_error($koneksi));
+    }
+
+    htmlRedirect('media.php?module='.$module.'&act=essay&id='.$id_tujian, 1);
+}
+
+// SIMPAN PILIHAN GANDA DARI BANK SOAL
+elseif (isset($_POST['pg_bank'])) {
+    if (!isset($tgl_sekarang) || empty($tgl_sekarang)) {
+        $tgl_sekarang = date('Y-m-d');
+    }
+
+    $id_soal_list = $_POST['id']; // array id bank soal
+    $id_tujian    = intval($_POST['id_tujian']);
+    $n = count($id_soal_list);
+
+    if ($n > 0) {
+        foreach ($id_soal_list as $id_bank) {
+            $id_bank = intval($id_bank);
+            $cd = mysqli_fetch_array(mysqli_query($koneksi, "SELECT * FROM bank_pilganda WHERE id='$id_bank'"));
+
+            if ($cd) {
+                $pertanyaan = mysqli_real_escape_string($koneksi, $cd['pertanyaan']);
+                $pil_a = mysqli_real_escape_string($koneksi, $cd['pil_a']);
+                $pil_b = mysqli_real_escape_string($koneksi, $cd['pil_b']);
+                $pil_c = mysqli_real_escape_string($koneksi, $cd['pil_c']);
+                $pil_d = mysqli_real_escape_string($koneksi, $cd['pil_d']);
+                $pil_e = mysqli_real_escape_string($koneksi, $cd['pil_e']);
+                $kunci = mysqli_real_escape_string($koneksi, $cd['kunci']);
+                $gambar = !empty($cd['gambar']) ? $cd['gambar'] : '';
+
+                mysqli_query($koneksi, "INSERT INTO soal_pilganda (
+                    id_tujian, pertanyaan, pil_a, pil_b, pil_c, pil_d, pil_e, kunci, gambar, tgl_buat, jenis_soal
+                ) VALUES (
+                    '$id_tujian', '$pertanyaan', '$pil_a', '$pil_b', '$pil_c', '$pil_d', '$pil_e', '$kunci', '$gambar', '$tgl_sekarang', 'pil_ganda'
+                )");
+            }
+        }
+        save_alert('save', 'Soal dari bank PG berhasil disalin');
+    } else {
+        save_alert('error', 'Tidak ada soal yang dipilih dari bank');
+    }
+
+    htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$id_tujian, 1);
+}
+
+// UPDATE PILIHAN GANDA
+elseif (isset($_POST['update_pilganda'])) {
+    if (!isset($tgl_sekarang) || empty($tgl_sekarang)) {
+        $tgl_sekarang = date('Y-m-d');
+    }
+
+    $id_soalpg  = intval($_POST['id_soalpg']);
+    $pertanyaan = mysqli_real_escape_string($koneksi, $_POST['pertanyaan']);
+    $pil_a      = mysqli_real_escape_string($koneksi, $_POST['pil_a']);
+    $pil_b      = mysqli_real_escape_string($koneksi, $_POST['pil_b']);
+    $pil_c      = mysqli_real_escape_string($koneksi, $_POST['pil_c']);
+    $pil_d      = mysqli_real_escape_string($koneksi, $_POST['pil_d']);
+    $pil_e      = mysqli_real_escape_string($koneksi, $_POST['pil_e']);
+    $kunci      = mysqli_real_escape_string($koneksi, $_POST['kunci']);
+
+    $lokasi_file = $_FILES['fupload']['tmp_name'];
+    $nama_file   = $_FILES['fupload']['name'];
+    $tipe_file   = $_FILES['fupload']['type'];
+
+    if (!empty($lokasi_file)) {
+        if (!in_array($tipe_file, ["image/jpeg", "image/jpg", "image/png"])) {
+            save_alert('error', 'Type file tidak diizinkan');
+            htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'], 1);
+            exit();
+        }
+        $cek = mysqli_fetch_array(mysqli_query($koneksi, "SELECT gambar FROM soal_pilganda WHERE id_soalpg='$id_soalpg'"));
+        if (!empty($cek['gambar'])) {
+            @unlink("module/foto_soal_pilganda/".$cek['gambar']);
+            @unlink("module/foto_soal_pilganda/medium_".$cek['gambar']);
+        }
+        UploadImage_soal_pilganda($nama_file);
+        $gambar = $nama_file;
+    } else {
+        $cek = mysqli_fetch_array(mysqli_query($koneksi, "SELECT gambar FROM soal_pilganda WHERE id_soalpg='$id_soalpg'"));
+        $gambar = $cek['gambar'];
+    }
+
+    $query = "UPDATE soal_pilganda 
+              SET pertanyaan='$pertanyaan', 
+                  pil_a='$pil_a', pil_b='$pil_b', pil_c='$pil_c', pil_d='$pil_d', pil_e='$pil_e', 
+                  kunci='$kunci', 
+                  gambar='$gambar', 
+                  tgl_buat='$tgl_sekarang' 
+              WHERE id_soalpg='$id_soalpg'";
+
+    if (mysqli_query($koneksi, $query)) {
+        save_alert('save', 'Soal pilihan ganda berhasil diperbarui');
+    } else {
+        save_alert('error', 'Gagal update: '.mysqli_error($koneksi));
+    }
+
+    htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_POST['id_tujian'], 1);
+}
+
+
+
+
+    
 
 }
 ?>

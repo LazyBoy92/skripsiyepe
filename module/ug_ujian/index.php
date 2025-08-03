@@ -600,7 +600,7 @@ case "pil_ganda":
                         <div class="form-group">
                           <label for="pertanyaan">Pertanyaan</label>
                             
-                            <textarea name="soal"  cols="75" rows="3" class="editor_soal"><?= $dt['pertanyaan'];?></textarea>
+                            <textarea name="pertanyaan"  cols="75" rows="3" class="editor_soal"><?= $dt['pertanyaan'];?></textarea>
                         </div>
 
                         <div class="form-group">
@@ -813,10 +813,10 @@ break;
 case "hapus":
     $cek = mysqli_query($koneksi,"SELECT * FROM soal_esay WHERE id_soal = '$_GET[id]'");
       $r = mysqli_fetch_array($cek);
-      if(empty($r[gambar])) {
+      if(empty($r['gambar'])) {
         mysqli_query($koneksi,"DELETE FROM soal_esay WHERE id_soal = '$_GET[id]'");
         save_alert('save','Soal di Hapus');
-      htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_GET[id_tujian],1);
+      htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_GET['id_tujian'],1);
        }
       else{
           $img = "module/foto_soal/$r[gambar]";
@@ -825,16 +825,16 @@ case "hapus":
           unlink($img2);
           mysqli_query($koneksi,"DELETE FROM soal_esay WHERE id_soal = '$_GET[id]'");
           save_alert('save','Soal di Hapus');
-          htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_GET[id_tujian],1);
+          htmlRedirect('media.php?module='.$module.'&act=essay&id='.$_GET['id_tujian'],1);
        }
 break;
 case "hapuspg":
     $cek = mysqli_query($koneksi,"SELECT * FROM soal_pilganda WHERE id_soalpg = '$_GET[id]'");
       $r = mysqli_fetch_array($cek);
-      if(empty($r[gambar])) {
+      if(empty($r['gambar'])) {
         mysqli_query($koneksi,"DELETE FROM soal_pilganda WHERE id_soalpg = '$_GET[id]'");
         save_alert('save','Soal di Hapus');
-      htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_GET[id_tujian],1);
+      htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_GET['id_tujian'],1);
        }
       else{
           $img = "module/foto_soal_pilganda/$r[gambar]";
@@ -843,7 +843,7 @@ case "hapuspg":
           unlink($img2);
           mysqli_query($koneksi,"DELETE FROM soal_pilganda WHERE id_soalpg = '$_GET[id]'");
           save_alert('save','Soal di Hapus');
-          htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_GET[id_tujian],1);
+          htmlRedirect('media.php?module='.$module.'&act=pil_ganda&id='.$_GET['id_tujian'],1);
        }
 break;
 case "hapus_topik":
